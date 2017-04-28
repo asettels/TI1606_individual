@@ -1,7 +1,7 @@
 use SimpleAgentProtoss as mas.
 use ProtossNexus.ProtossNexus as knowledge.
 use ProtossNexus.ProtossNexus as module.
-timeout=60. % 5 minutes; shorten this for quicker testing of earlier stars
+timeout=300. % 5 minutes; shorten this for quicker testing of earlier stars
 
 % This test performs checks to see if a star is (likely) obtained by the agent team.
 % A failure of a specific condition indicates which star you failed to achieve; 

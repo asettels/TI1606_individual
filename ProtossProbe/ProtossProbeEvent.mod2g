@@ -26,11 +26,13 @@ module ProtossProbeEvent {
 	%handling resources percept
 	forall bel(resources(Om,Og,Oc,Ot)), percept(resources(M,G,C,T)) do delete(resources(Om,Og,Oc,Ot)) + insert(resources(M,G,C,T)).
 	
+	%if the Nexus wants us to build an assimilator, build it
+	forall (Nexus).sent(build('Protoss Assimilator', X, Y)) do adopt(build('Protoss Assimilator', X, Y)).
+	
 	%If a Nexus wants me to gather gas, we want that too.
 	if (Nexus).sent(gatherGas(Id)) then adopt(gatheredGas(Id)).
 	
-	%if there hasn't been built on a geyser and no other probe is building on it, build on it
-	forall (Nexus).sent(build('Protoss Assimilator', X, Y)) do adopt(build('Protoss Assimilator', X, Y)).
+	%If the Nexus wants us to build a pylon, build a pylon.
 	forall (Nexus).sent(build('Protoss Pylon', X, Y)) do adopt(build('Protoss Pylon', X, Y)).
 
 	% Check the gathered goals
