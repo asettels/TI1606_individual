@@ -1,0 +1,34 @@
+use ProtossNexus as knowledge.
+
+module ProtossNexusEvent {	
+	% DO NOT REMOVE OR MODIFY THE TWO RULES BELOW
+	forall bel(friendly(Type,Id,Conditions)), not(percept(friendly(Type,Id,Conditions))) do delete(friendly(Type,Id,Conditions)).
+	forall percept(friendly(Type,Id,Conditions)), not(bel(friendly(Type,Id,Conditions))) do insert(friendly(Type,Id,Conditions)).
+	
+	%insert/delete vespenegeysers
+	forall (Probe).sent(insVespeneGeyser(Id,Amount,ResG,X,Y)) do insert (vespeneGeyser(Id,Amount,ResG,X,Y)).
+	forall (Probe).sent(delVespeneGeyser(Id,Amount,ResG,X,Y)) do delete (vespeneGeyser(Id,Amount,ResG,X,Y)).
+	
+	forall (Probe).sent(insConstructionSite(X,Y,PylonR)) do insert (constructionSite(X,Y,PylonR)).
+	forall (Probe).sent(delConstructionSite(X,Y,PylonR)) do delete (constructionSite(X,Y,PylonR)).
+	
+	%send on change: resources
+	forall bel(resources(Om,Og,Oc,Ot)), percept(resources(M,G,C,T)) do delete(resources(Om,Og,Oc,Ot)) + insert(resources(M,G,C,T)).
+	%send on change: queueSize
+	forall bel(queueSize(OldS)), percept(queueSize(S)) do delete(queueSize(OldS)) + insert(queueSize(S * 2)).
+	
+	
+	%let a probe build a vespeneGeyser. If the message got to a Nexus by accident, try it again.
+	if bel(vespeneGeyser(Id,_,_,X,Y), resources(A,B,C,D), A>=100, not(build('Protoss Assimilator'))) then someother.send(build('Protoss Assimilator', X, Y)) + insert(build('Protoss Assimilator')).
+	forall (Nexus).sent(build('Protoss Assimilator', X, Y)) do (Nexus).send(noBuild('Protoss Assimilator', X, Y)).
+	forall (Nexus).sent(noBuild('Protoss Assimilator', X, Y)) do someother.send(build('Protoss Assimilator', X, Y)).
+	
+	%If we have an Assimilator, send a message to get probes to gather gas
+	if bel(friendly('Protoss Assimilator', Id, [idle]), not(assignedAssimilator(Id))) then allother.send(gatherGas(Id)) + insert(assignedAssimilator(Id)).
+	
+	%if there are enough resources and the nexus is not building enough probes, build more probes.
+	if bel(resources(M,G,C,T), queueSize(S), M>=50, (S+C)<T) then adopt(train('Protoss Probe')).
+	
+	%If we need more pylons and we can build one, build one.
+	if bel(resources(M,G,C,T), C is T, M>=100, constructionSite(X,Y,PylonR)) then someother.send(build('Protoss Pylon',X,Y)) + delete(constructionSite(X,Y,PylonR)).
+}

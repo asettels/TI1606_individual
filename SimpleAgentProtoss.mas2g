@@ -1,0 +1,33 @@
+use "StarCraft connector.jar" as environment with
+	map="(2)Destination.scx",
+	own_race="Protoss",
+	starcraft_location="C:\Starcraft",
+	auto_menu="Single_Player",
+	enemy_race="random",
+	debug="true", % launch the developer tool
+	invulnerable="true", % individual assignment only
+	game_speed=50. % default tournament speed
+
+% DO NOT REMOVE OR CHANGE THIS AGENT DEFINITION
+% Defines an agent for the player's main base
+define mainBase as agent {
+	% you can add an init module here if needed
+	use ProtossNexus.ProtossNexusEvent as event module.
+	use ProtossNexus.ProtossNexus as main module.
+	use ProtossNexus.ProtossNexusInit as init module.
+}
+
+% Define a worker drone agent
+define protossProbe as agent {
+	use ProtossProbe.ProtossProbe as main module.
+	use ProtossProbe.ProtossProbeInit as init module.
+	use ProtossProbe.ProtossProbeEvent as event module.
+} 
+
+launchpolicy{
+	% DO NOT REMOVE THIS LAUNCH RULE
+	% Launch an agent for the main base
+	when type = protossNexus launch mainBase.
+	% Launch a probe agent for each worker
+	when type = protossProbe launch protossProbe.
+}

@@ -1,0 +1,16 @@
+use ProtossProbe as knowledge.
+use ProtossProbe as actionspec.
+
+module ProtossProbe {
+	%If you want to gather gas, gather gas
+	if goal(gatheredGas(Id)), bel(workerActivity(idling)) then gather(Id).
+	
+	% If we need to gather minerals, and we're not doing anything, start gathering minerals.
+	if goal(gathered(Id)), bel(workerActivity(idling)) then gather(Id).
+
+	% If we need to build an Assimilator, build one
+	if goal(build('Protoss Assimilator', X, Y)), bel(resources(A,B,C,D), A>=100) then build('Protoss Assimilator', X, Y).	
+	
+	%If we want to build a Pylon and we can, build one.
+	if goal(build('Protoss Pylon', X, Y)), bel(resources(A,B,C,D), A>=100) then build('Protoss Pylon',X,Y).
+}

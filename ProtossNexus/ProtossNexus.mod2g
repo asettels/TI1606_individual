@@ -1,0 +1,10 @@
+use ProtossNexus as knowledge.
+use ProtossNexus as actionspec.
+
+module ProtossNexus {
+
+	% HACK to have at least something here: you may remove this when using the agent.
+	if percept(winner) then print("Winner!").
+	
+	if goal(train(X)) then train(X).
+}

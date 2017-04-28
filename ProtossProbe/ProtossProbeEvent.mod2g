@@ -1,0 +1,40 @@
+use ProtossProbe as knowledge.
+use ProtossProbe as actionspec.
+
+module ProtossProbeEvent {
+	% The handling of the mineralfields	percepts (update amounts).
+	% Amount is always >1, as mineralFields dissapear from the game when empty.
+	forall bel(mineralField(Id,Amount)), not(percept(mineralField(Id,Amount,_,_,_))) do delete(mineralField(Id,Amount)).
+	forall percept(mineralField(Id,Amount,_,_,_)), not(bel(mineralField(Id,Amount))) do insert(mineralField(Id,Amount)).
+	
+	%Handling of vespeneGeyser percepts
+	forall bel(vespeneGeyser(Id,Amount,ResG,X,Y)), not(percept(vespeneGeyser(Id,Amount,ResG,X,Y))) do delete(vespeneGeyser(Id,Amount,ResG,X,Y)) + allother.send(delVespeneGeyser(Id,Amount,ResG,X,Y)).
+	forall percept(vespeneGeyser(Id,Amount,ResG,X,Y)), not(bel(vespeneGeyser(Id,Amount,ResG,X,Y))) do insert(vespeneGeyser(Id,Amount,ResG,X,Y)) + allother.send(insVespeneGeyser(Id,Amount,ResG,X,Y)).
+	
+	%Handling of constructionsite percepts
+	forall bel(constructionSite(X,Y,PylonR)), not(percept(constructionSite(X,Y,PylonR))) do delete(constructionSite(X,Y,PylonR)) + allother.send(delConstructionSite(X,Y,PylonR)).
+	forall percept(constructionSite(X,Y,PylonR)), not(bel(constructionSite(X,Y,PylonR))) do insert(constructionSite(X,Y,PylonR)) + allother.send(insConstructionSite(X,Y,PylonR)).
+	
+	%Handling friendly percept
+	forall bel(friendly(Type,Id,Conditions)), not(percept(friendly(Type,Id,Conditions))) do delete(friendly(Type,Id,Conditions)).
+	forall percept(friendly(Type,Id,Conditions)), not(bel(friendly(Type,Id,Conditions))) do insert(friendly(Type,Id,Conditions)).
+	
+	% The handling of the workerActivity percept
+	if percept(workerActivity(NewActivity)), bel(self(Id), workerActivity(OldActivity), NewActivity \= OldActivity) 
+	then delete(workerActivity(OldActivity)) + insert(workerActivity(NewActivity)) + allother.send(doing(Id, OldActivity, NewActivity)).
+	
+	%handling resources percept
+	forall bel(resources(Om,Og,Oc,Ot)), percept(resources(M,G,C,T)) do delete(resources(Om,Og,Oc,Ot)) + insert(resources(M,G,C,T)).
+	
+	%If a Nexus wants me to gather gas, we want that too.
+	if (Nexus).sent(gatherGas(Id)) then adopt(gatheredGas(Id)).
+	
+	%if there hasn't been built on a geyser and no other probe is building on it, build on it
+	forall (Nexus).sent(build('Protoss Assimilator', X, Y)) do adopt(build('Protoss Assimilator', X, Y)).
+	forall (Nexus).sent(build('Protoss Pylon', X, Y)) do adopt(build('Protoss Pylon', X, Y)).
+
+	% Check the gathered goals
+	if goal(gathered(Id)), not(bel(mineralField(Id,_); friendly('Protoss Assimilator',Id,_))) then insert(gathered(Id)).
+	
+	
+}
