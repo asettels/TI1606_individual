@@ -1,0 +1,8 @@
+use ProtossGateway as knowledge.
+
+module ProtossGatewayInit {
+	%initialize resources
+	if percept(resources(A,B,C,D)) then insert(resources(A,B,C,D)).
+	%initialize queueSize
+	if percept(queueSize(S)) then insert(queueSize(S * 2)).
+}

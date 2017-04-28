@@ -2,6 +2,6 @@ use ProtossNexus as knowledge.
 
 %train action, doe only if there is enough capacity and resources
 define train(Type) with
-	pre{resources(M,G,C,T), queueSize(S), (C+S)<T}
+	pre{resources(M,G,C,T), queueSize(S), M>=50, (C+S)<T}
 	post{true}
 		

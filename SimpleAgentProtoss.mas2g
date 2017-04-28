@@ -24,10 +24,19 @@ define protossProbe as agent {
 	use ProtossProbe.ProtossProbeEvent as event module.
 } 
 
+% Define a gateway agent
+define protossGateway as agent {
+	use ProtossGateway.ProtossGateway as main module.
+	use ProtossGateway.ProtossGatewayInit as init module.
+	use ProtossGateway.ProtossGatewayEvent as event module.
+} 
+
 launchpolicy{
 	% DO NOT REMOVE THIS LAUNCH RULE
 	% Launch an agent for the main base
 	when type = protossNexus launch mainBase.
 	% Launch a probe agent for each worker
 	when type = protossProbe launch protossProbe.
+	%Launch a gateway for each gateway
+	when type = protossGateway launch protossGateway.
 }

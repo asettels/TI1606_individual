@@ -1,0 +1,18 @@
+use ProtossGateway as knowledge.
+
+module ProtossGatewayEvent {
+	% DO NOT REMOVE OR MODIFY THE TWO RULES BELOW
+	forall bel(friendly(Type,Id,Conditions)), not(percept(friendly(Type,Id,Conditions))) do delete(friendly(Type,Id,Conditions)).
+	forall percept(friendly(Type,Id,Conditions)), not(bel(friendly(Type,Id,Conditions))) do insert(friendly(Type,Id,Conditions)).
+	
+	
+	%send on change: queueSize
+	forall bel(queueSize(OldS)), percept(queueSize(S)) do delete(queueSize(OldS)) + insert(queueSize(S * 2)).
+	
+	%send on change: resources
+	forall bel(resources(Om,Og,Oc,Ot)), percept(resources(M,G,C,T)) do delete(resources(Om,Og,Oc,Ot)) + insert(resources(M,G,C,T)).
+	
+	%if there are enough resources and the nexus is not building enough probes, build more probes.
+	if bel(resources(M,G,C,T), queueSize(S), M>=100, (S+C+1)<T) then adopt(train('Protoss Zealot')).
+	
+}

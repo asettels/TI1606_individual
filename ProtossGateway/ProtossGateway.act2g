@@ -1,0 +1,5 @@
+use ProtossGateway as knowledge.
+
+define train(Type) with
+	pre{resources(M,G,C,T), queueSize(S), M>=100, (C+S+1)<T}
+	post{true}

@@ -7,6 +7,9 @@ module ProtossProbe {
 	
 	% If we need to gather minerals, and we're not doing anything, start gathering minerals.
 	if goal(gathered(Id)), bel(workerActivity(idling)) then gather(Id).
+	
+	%If we want to build a Gateway on a location, build one there
+	if goal(build('Protoss Gateway', X, Y)), bel(resources(A,B,C,D), A>=150) then build('Protoss Gateway', X, Y).	
 
 	% If we need to build an Assimilator, build one
 	if goal(build('Protoss Assimilator', X, Y)), bel(resources(A,B,C,D), A>=100) then build('Protoss Assimilator', X, Y).	

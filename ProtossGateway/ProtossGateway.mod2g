@@ -1,0 +1,6 @@
+use ProtossGateway as knowledge.
+use ProtossGateway as actionspec.
+
+module ProtossGateway {
+	if goal(train(X)) then train(X).
+}

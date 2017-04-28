@@ -32,6 +32,9 @@ module ProtossProbeEvent {
 	%If a Nexus wants me to gather gas, we want that too.
 	if (Nexus).sent(gatherGas(Id)) then adopt(gatheredGas(Id)).
 	
+	%If the Nexus tells us to build a Gateway, build one.
+	forall bel(not(friendly('Protoss Gateway',_,_))), (Nexus).sent(build('Protoss Gateway',X,Y)) do adopt(build('Protoss Gateway',X,Y)).
+	
 	%If the Nexus wants us to build a pylon, build a pylon.
 	forall (Nexus).sent(build('Protoss Pylon', X, Y)) do adopt(build('Protoss Pylon', X, Y)).
 

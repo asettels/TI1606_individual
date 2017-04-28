@@ -31,6 +31,8 @@ module ProtossNexusEvent {
 	%If we need more pylons and we can build one, build one.
 	if bel(resources(M,G,C,T), C is T, M>=100, constructionSite(X,Y,PylonR)) then someother.send(build('Protoss Pylon',X,Y)) + delete(constructionSite(X,Y,PylonR)).
 	
+	if bel(resources(M,G,C,T), M>=150, constructionSite(X,Y,true), not(build('Protoss Gateway'))) then someother.send(build('Protoss Gateway',X,Y)) + insert(build('Protoss Gateway'))+ delete(constructionSite(X,Y,true)).
+	
 	%If we have an Assimilator, send a message to get probes to gather gas
 	if bel(friendly('Protoss Assimilator', Id, ['idle']), not(assignedAssimilator(Id))) then allother.send(gatherGas(Id)) + insert(assignedAssimilator(Id)).
 }
